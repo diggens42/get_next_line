@@ -6,7 +6,7 @@
 /*   By: fwahl <fwahl@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/21 20:36:04 by fwahl             #+#    #+#             */
-/*   Updated: 2023/10/22 19:34:53 by fwahl            ###   ########.fr       */
+/*   Updated: 2023/10/22 22:05:57 by fwahl            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,52 +15,63 @@
 
 char	*get_next_line(int fd)
 {
-	char	*buffer;
-	char	*ptr;
+	char	*static_buffer;
+	char	*res;
 	ssize_t	nbytes;
+	size_t	bytes_read;
 	
-	buffer = (char *)malloc((BUFFER_SIZE + 1)*(sizeof(char)));
-	if (!buffer)
+	bytes_read = 0;
+	res = malloc((BUFFER_SIZE + 1)*(sizeof(char)));
+	if (!res)
 		return (NULL);
-	ptr = buffer;
-	while((nbytes = read(fd, ptr, 1) > 0))
+	res[0] = '\0';
+	while((nbytes = read_to_buff(fd, &static_buffer)) > 0)
 	{	
-		if (*ptr == '\n')
-		{	
-			ptr++;
-			*ptr = '\0';
-			return (buffer);
-		}
-		ptr++;
+		bytes_read += nbytes;
+		ft_strlcat(res, static_buffer, BUFFER_SIZE + 1);
+		if (ft_strchr(res, '\n') != NULL)
+			return (res);
 	}
 	if (nbytes < 0)
 	{
-		free(buffer);
+		free(res);
 		return (NULL);
 	}
-	if (ptr == buffer)
+	if (bytes_read == 0)
 	{
-		free(buffer);
+		free(res);
 		return (NULL);
 	}
-	*ptr = '\0';
-	return (buffer);
+	return (res);
 }
 
-int main(void) {
-	int fd = open("dracula.txt", O_RDONLY);
+ssize_t	read_to_buff(int fd, char **str_buffer)
+{
+	static char	buffer[BUFFER_SIZE + 1];
+	ssize_t	nbytes;
 	
-	char *line;
-	while ((line = get_next_line(fd)) != NULL) {
-		printf("%s", line);
-		free(line);
-	}
-	printf("\n");
-	
-	close(fd);
-	system("leaks a.out");
-	return 0;
+	nbytes = read(fd, buffer, BUFFER_SIZE);
+	if (nbytes <= 0)
+		return (nbytes);
+	buffer[nbytes] = '\0';
+	*str_buffer = buffer;
+	return (nbytes);
 }
+
+// int main(void) {
+// 	int fd = open("dracula.txt", O_RDONLY);
+	
+// 	char *line;
+// 	while ((line = get_next_line(fd)) != NULL) {
+// 		printf("%s", line);
+// 		free(line);
+// 	}
+// 	printf("\n");
+	
+// 	close(fd);
+// 	system("leaks a.out");
+// 	return 0;
+// }
 
 
 
