@@ -6,7 +6,7 @@
 /*   By: fwahl <fwahl@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/21 20:36:04 by fwahl             #+#    #+#             */
-/*   Updated: 2023/10/22 22:26:27 by fwahl            ###   ########.fr       */
+/*   Updated: 2023/10/22 22:50:05 by fwahl            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 char	*get_next_line(int fd)
 {
-	char	*static_buffer;
+	char	*buffer;
 	char	*res;
 	char	*temp;
 	ssize_t	nbytes;
@@ -23,9 +23,9 @@ char	*get_next_line(int fd)
 	res = ft_strdup("");
 	if (!res)
 		return (NULL);
-	while((nbytes = read_to_buff(fd, &static_buffer)) > 0)
+	while((nbytes = read_to_buff(fd, &buffer)) > 0)
 	{	
-		temp = ft_strjoin(res, static_buffer);
+		temp = ft_strjoin(res, buffer);
 		if (!temp)
 		{
 			free(res);
@@ -51,12 +51,20 @@ char	*get_next_line(int fd)
 
 ssize_t	read_to_buff(int fd, char **str_buffer)
 {
-	static char	buffer[BUFFER_SIZE + 1];
+	static char	*buffer;
 	ssize_t	nbytes;
 	
+	if (buffer == NULL)
+		buffer = malloc((BUFFER_SIZE + 1) * sizeof(char));
+		if(!buffer)
+			return (-1);
 	nbytes = read(fd, buffer, BUFFER_SIZE);
 	if (nbytes <= 0)
+	{
+		free(buffer);
+		buffer = NULL;
 		return (nbytes);
+	}
 	buffer[nbytes] = '\0';
 	*str_buffer = buffer;
 	return (nbytes);
