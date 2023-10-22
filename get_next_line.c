@@ -6,7 +6,7 @@
 /*   By: fwahl <fwahl@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/21 20:36:04 by fwahl             #+#    #+#             */
-/*   Updated: 2023/10/22 22:05:57 by fwahl            ###   ########.fr       */
+/*   Updated: 2023/10/22 22:26:27 by fwahl            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,18 +17,22 @@ char	*get_next_line(int fd)
 {
 	char	*static_buffer;
 	char	*res;
+	char	*temp;
 	ssize_t	nbytes;
-	size_t	bytes_read;
 	
-	bytes_read = 0;
-	res = malloc((BUFFER_SIZE + 1)*(sizeof(char)));
+	res = ft_strdup("");
 	if (!res)
 		return (NULL);
-	res[0] = '\0';
 	while((nbytes = read_to_buff(fd, &static_buffer)) > 0)
 	{	
-		bytes_read += nbytes;
-		ft_strlcat(res, static_buffer, BUFFER_SIZE + 1);
+		temp = ft_strjoin(res, static_buffer);
+		if (!temp)
+		{
+			free(res);
+			return (NULL);
+		}
+		free(res);
+		res = temp;
 		if (ft_strchr(res, '\n') != NULL)
 			return (res);
 	}
@@ -37,7 +41,7 @@ char	*get_next_line(int fd)
 		free(res);
 		return (NULL);
 	}
-	if (bytes_read == 0)
+	if (*res == '\0')
 	{
 		free(res);
 		return (NULL);
