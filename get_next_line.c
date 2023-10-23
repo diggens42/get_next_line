@@ -6,7 +6,7 @@
 /*   By: fwahl <fwahl@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/21 20:36:04 by fwahl             #+#    #+#             */
-/*   Updated: 2023/10/23 21:50:51 by fwahl            ###   ########.fr       */
+/*   Updated: 2023/10/24 00:27:15 by fwahl            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ char	*get_next_line(int fd)
 	size_t	buffer_capacity;
 	ssize_t	nbytes;
 	char	*buffer;
+	char	*line;
 	
 	buffer_size = 0;
 	buffer_capacity = BUFFER_SIZE;
@@ -66,23 +67,72 @@ char	*get_next_line(int fd)
 		free(buffer);
 		return (NULL);
 	}
-	return (buffer);
+	line = get_line(buffer);
+	free(buffer);
+	return (line);
 }
 
-// int main(void) {
-// 	int fd = open("dracula.txt", O_RDONLY);
+char	*get_line(char *str)
+{
+	char	*start;
+	char	*line;
+	char	*line_ptr;
+
+	start = str;
+	if (*start == '\0')
+		return (NULL);
+	while (*start != '\0' && *start != '\n')
+		start++;
+	line = malloc((sizeof(char)) * (start - str + 2));
+	if (line == NULL)
+		return (NULL);
+	line_ptr = line;
+	while (str != start)
+		*line_ptr++ = *str++;
+	if (*str == '\n')
+		*line_ptr++ = *str++;
+	return (line);
+}
+
+char	*get_remain(char *str)
+{
+	char	*p;
+	char	*remain;
 	
-// 	char *line;
-// 	while ((line = get_next_line(fd)) != NULL) {
-// 		printf("%s", line);
-// 		free(line);
-// 	}
-// 	printf("\n");
+	p = str;
+	while (*p && *p != '\n')
+		p++;
+	if (*p == '\0')
+	{
+		free(str);
+		return (NULL);
+	}
+	p++;
+	remain = (char *)malloc(ft_strlen(p) + 1);
+	if (!remain)
+	{
+		free(str);
+		return (NULL);
+	}
+	ft_memcpy(remain, p, ft_strlen(p) + 1);
+	free(str);
+	return (remain);
+}
+
+int main(void) {
+	int fd = open("dracula.txt", O_RDONLY);
 	
-// 	close(fd);
-// 	system("leaks a.out");
-// 	return 0;
-// }
+	char *line;
+	while ((line = get_next_line(fd)) != NULL) {
+		printf("%s", line);
+		free(line);
+	}
+	printf("\n");
+	
+	close(fd);
+	system("leaks a.out");
+	return 0;
+}
 
 // char	*get_next_line(int fd)
 // {
