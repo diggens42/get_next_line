@@ -6,68 +6,67 @@
 /*   By: fwahl <fwahl@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/21 20:36:04 by fwahl             #+#    #+#             */
-/*   Updated: 2023/10/22 22:50:05 by fwahl            ###   ########.fr       */
+/*   Updated: 2023/10/23 21:50:51 by fwahl            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
+char	*resize_buffer(char *buffer, size_t *buffer_size, size_t *buffer_capacity)
+{
+	char *new_buffer;
+
+	if (*buffer_size >= *buffer_capacity)
+	{
+		*buffer_capacity += BUFFER_SIZE;
+		new_buffer = malloc(*buffer_capacity + 1);
+		if (!new_buffer)
+		{
+			free(buffer);
+			return (NULL);
+		}
+		ft_strlcpy(new_buffer, buffer, *buffer_size + 1);
+		free(buffer);
+		buffer = new_buffer;
+	}
+	return (buffer);
+}
 
 char	*get_next_line(int fd)
 {
-	char	*buffer;
-	char	*res;
-	char	*temp;
+	size_t	buffer_size;
+	size_t	buffer_capacity;
 	ssize_t	nbytes;
+	char	*buffer;
 	
-	res = ft_strdup("");
-	if (!res)
+	buffer_size = 0;
+	buffer_capacity = BUFFER_SIZE;
+	buffer = malloc(buffer_capacity + 1);
+	if (!buffer)
 		return (NULL);
-	while((nbytes = read_to_buff(fd, &buffer)) > 0)
-	{	
-		temp = ft_strjoin(res, buffer);
-		if (!temp)
+	buffer[0] = '\0';
+	while (42)
+	{
+		buffer = resize_buffer(buffer, &buffer_size, &buffer_capacity);
+		if (!buffer)
+			return(NULL);
+		nbytes = read(fd, buffer + buffer_size, BUFFER_SIZE);
+		if (nbytes < 0)
 		{
-			free(res);
+			free(buffer);
 			return (NULL);
 		}
-		free(res);
-		res = temp;
-		if (ft_strchr(res, '\n') != NULL)
-			return (res);
+		buffer_size += nbytes;
+		buffer[buffer_size] = '\0';
+		if (ft_strchr(buffer, '\n') || nbytes == 0)
+			break;
 	}
-	if (nbytes < 0)
-	{
-		free(res);
-		return (NULL);
-	}
-	if (*res == '\0')
-	{
-		free(res);
-		return (NULL);
-	}
-	return (res);
-}
-
-ssize_t	read_to_buff(int fd, char **str_buffer)
-{
-	static char	*buffer;
-	ssize_t	nbytes;
-	
-	if (buffer == NULL)
-		buffer = malloc((BUFFER_SIZE + 1) * sizeof(char));
-		if(!buffer)
-			return (-1);
-	nbytes = read(fd, buffer, BUFFER_SIZE);
-	if (nbytes <= 0)
+	if (buffer_size == 0)
 	{
 		free(buffer);
-		buffer = NULL;
-		return (nbytes);
+		return (NULL);
 	}
-	buffer[nbytes] = '\0';
-	*str_buffer = buffer;
-	return (nbytes);
+	return (buffer);
 }
 
 // int main(void) {
@@ -83,6 +82,63 @@ ssize_t	read_to_buff(int fd, char **str_buffer)
 // 	close(fd);
 // 	system("leaks a.out");
 // 	return 0;
+// }
+
+// char	*get_next_line(int fd)
+// {
+// 	char	*buffer;
+// 	char	*res;
+// 	char	*temp;
+// 	ssize_t	nbytes;
+	
+// 	res = ft_strdup("");
+// 	if (!res)
+// 		return (NULL);
+// 	while((nbytes = read_to_buff(fd, &buffer)) > 0)
+// 	{	
+// 		temp = ft_strjoin(res, buffer);
+// 		if (!temp)
+// 		{
+// 			free(res);
+// 			return (NULL);
+// 		}
+// 		free(res);
+// 		res = temp;
+// 		if (ft_strchr(res, '\n') != NULL)
+// 			return (res);
+// 	}
+// 	if (nbytes < 0)
+// 	{
+// 		free(res);
+// 		return (NULL);
+// 	}
+// 	if (*res == '\0')
+// 	{
+// 		free(res);
+// 		return (NULL);
+// 	}
+// 	return (res);
+// }
+
+// ssize_t	read_to_buff(int fd, char **str_buffer)
+// {
+// 	static char	*buffer;
+// 	ssize_t	nbytes;
+	
+// 	if (buffer == NULL)
+// 		buffer = malloc(2 * (BUFFER_SIZE) * sizeof(char));
+// 		if(!buffer)
+// 			return (-1);
+// 	nbytes = read(fd, buffer, BUFFER_SIZE);
+// 	if (nbytes <= 0)
+// 	{
+// 		free(buffer);
+// 		buffer = NULL;
+// 		return (nbytes);
+// 	}
+// 	buffer[nbytes] = '\0';
+// 	*str_buffer = buffer;
+// 	return (nbytes);
 // }
 
 
