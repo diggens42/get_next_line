@@ -1,17 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.h                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.h                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fwahl <fwahl@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/10/21 20:39:16 by fwahl             #+#    #+#             */
-/*   Updated: 2023/10/28 21:22:10 by fwahl            ###   ########.fr       */
+/*   Created: 2023/10/28 20:58:08 by fwahl             #+#    #+#             */
+/*   Updated: 2023/10/28 21:22:50 by fwahl            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef GET_NEXT_LINE_H
-# define GET_NEXT_LINE_H
+#ifndef GET_NEXT_LINE_BONUS_H
+# define GET_NEXT_LINE_BONUS_H
 
 # ifndef BUFFER_SIZE
 #  define BUFFER_SIZE 42

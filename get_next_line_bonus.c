@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fwahl <fwahl@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/10/21 20:36:04 by fwahl             #+#    #+#             */
-/*   Updated: 2023/10/28 21:53:08 by fwahl            ###   ########.fr       */
+/*   Created: 2023/10/28 20:57:08 by fwahl             #+#    #+#             */
+/*   Updated: 2023/10/28 21:53:24 by fwahl            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,30 +14,30 @@
 
 char	*get_next_line(int fd)
 {
-	static char		*buffer;
+	static char		*buffer[123];
 	char			*next_line;
 
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
-	if (!buffer)
+	if (!buffer[fd])
 	{
-		buffer = malloc((sizeof(char) * (BUFFER_SIZE + 1)));
-		if (!buffer)
+		buffer[fd] = malloc((sizeof(char) * (BUFFER_SIZE + 1)));
+		if (!buffer[fd])
 			return (NULL);
-		ft_memset(buffer, 0, BUFFER_SIZE + 1);
+		ft_memset(buffer[fd], 0, BUFFER_SIZE + 1);
 	}
-	buffer = read_to_buff(fd, buffer);
-	if (buffer == NULL || (buffer[0] == '\0'))
+	buffer[fd] = read_to_buff(fd, buffer[fd]);
+	if (buffer[fd] == NULL || (buffer[fd][0] == '\0'))
 	{
-		if (buffer)
+		if (buffer[fd])
 		{
-			free(buffer);
-			buffer = NULL;
+			free(buffer[fd]);
+			buffer[fd] = NULL;
 		}
 		return (NULL);
 	}
-	next_line = get_line_from_buff(buffer);
-	buffer = get_remain(buffer);
+	next_line = get_line_from_buff(buffer[fd]);
+	buffer[fd] = get_remain(buffer[fd]);
 	return (next_line);
 }
 
@@ -133,16 +133,3 @@ void	*ft_memset(void *b, int c, size_t len)
 	}
 	return (b);
 }
-
-// int main(void) {
-// 	int fd = open("dracula.txt", O_RDONLY);
-// 	char *line;
-// 	while ((line = get_next_line(fd)) != NULL) {
-// 		printf("%s", line);
-// 		free(line);
-// 	}
-// 	printf("\n");
-// 	close(fd);
-// 	system("leaks a.out");
-// 	return 0;
-// }
