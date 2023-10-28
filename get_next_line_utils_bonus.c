@@ -6,11 +6,11 @@
 /*   By: fwahl <fwahl@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/28 20:57:48 by fwahl             #+#    #+#             */
-/*   Updated: 2023/10/28 20:58:49 by fwahl            ###   ########.fr       */
+/*   Updated: 2023/10/29 00:00:07 by fwahl            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 size_t	ft_strlcat(char *dest, const char *src, size_t dest_size)
 {
