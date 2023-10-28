@@ -6,7 +6,7 @@
 /*   By: fwahl <fwahl@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/21 20:36:04 by fwahl             #+#    #+#             */
-/*   Updated: 2023/10/28 01:53:53 by fwahl            ###   ########.fr       */
+/*   Updated: 2023/10/28 18:14:07 by fwahl            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,10 @@ char	*get_next_line(int fd)
 	if (buffer == NULL || (buffer[0] == '\0'))
 	{
 		if (buffer)
+		{
 			free(buffer);
+			buffer = NULL;
+		}
 		return (NULL);
 	}
 	next_line = get_line_from_buff(buffer);
@@ -65,14 +68,18 @@ char	*read_to_buff(int fd, char *buffer)
 	char	read_string[BUFFER_SIZE + 1];
 	char	*temp;
 
+	if (read(fd, NULL, 0) == -1)
+		{
+			free(buffer);
+			return (NULL);
+		}
 	while (1)
 	{
 		nbytes = read(fd, read_string, BUFFER_SIZE);
-		if (nbytes < 0)
-			return (NULL);
 		if (nbytes == 0)
 			return (buffer);
-		read_string[nbytes] = '\0';
+		if (nbytes <= BUFFER_SIZE)
+			read_string[nbytes] = '\0';
 		temp = ft_strjoin(buffer, read_string);
 		if (temp == NULL)
 			return (NULL);
