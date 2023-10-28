@@ -6,7 +6,7 @@
 /*   By: fwahl <fwahl@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/21 20:36:04 by fwahl             #+#    #+#             */
-/*   Updated: 2023/10/28 18:14:07 by fwahl            ###   ########.fr       */
+/*   Updated: 2023/10/28 20:54:10 by fwahl            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,10 +69,10 @@ char	*read_to_buff(int fd, char *buffer)
 	char	*temp;
 
 	if (read(fd, NULL, 0) == -1)
-		{
-			free(buffer);
-			return (NULL);
-		}
+	{
+		free(buffer);
+		return (NULL);
+	}
 	while (1)
 	{
 		nbytes = read(fd, read_string, BUFFER_SIZE);
